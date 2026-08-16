@@ -18,9 +18,9 @@ class SecurityHeaders
         $response->headers->set('Content-Security-Policy', implode('; ', [
             "default-src 'self'",
             "script-src 'self'",
-            "style-src 'self' 'unsafe-inline' https://fonts.bunny.net",
-            "font-src 'self' https://fonts.bunny.net",
-            "img-src 'self' data:",
+            "style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://fonts.googleapis.com",
+            "font-src 'self' https://fonts.bunny.net https://fonts.gstatic.com",
+            "img-src 'self' data: https://avatars.githubusercontent.com",
             "object-src 'none'",
             "base-uri 'self'",
             "frame-ancestors 'self'",
