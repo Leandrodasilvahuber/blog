@@ -86,75 +86,6 @@ const illustrations = {
 };
 
 /* ===== conteúdo de exemplo (lorem ipsum) ===== */
-const posts = [
-  {
-    role: "Backend · IA",
-    time: "há 2 h",
-    illustration: "brain",
-    lead: "Sobre decisões de arquitetura em sistemas de IA",
-    body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    tags: ["#IA", "#Arquitetura"],
-    likes: 214, comments: 38, reposts: 12,
-    topReactor: "Marina Costa",
-    comment: { name: "Rafael Souza", role: "Eng. de Software", time: "há 1 h", text: "Excelente ponto sobre acoplamento entre serviços. Vivi isso recentemente numa migração." }
-  },
-  {
-    role: "Infraestrutura",
-    time: "há 6 h",
-    illustration: "cloud",
-    lead: "Migrando cargas de trabalho para a nuvem",
-    body: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident sunt in culpa.",
-    tags: ["#Cloud", "#DevOps"],
-    likes: 156, comments: 21, reposts: 9,
-    topReactor: "Bruno Alves",
-    comment: { name: "Camila Nogueira", role: "SRE", time: "há 3 h", text: "Passamos por isso ano passado, o maior ganho foi na observabilidade." }
-  },
-  {
-    role: "Ferramentas",
-    time: "há 1 dia",
-    illustration: "terminal",
-    lead: "Um pequeno hábito que mudou meu fluxo de trabalho",
-    body: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Curabitur pretium tincidunt lacus, ut interdum tellus elit sed risus.",
-    tags: ["#Produtividade", "#CLI"],
-    likes: 302, comments: 47, reposts: 26,
-    topReactor: "Diego Martins",
-    comment: { name: "Fernanda Lima", role: "Product Engineer", time: "há 20 h", text: "Comecei a fazer isso essa semana, já senti diferença no foco." }
-  },
-  {
-    role: "Dados",
-    time: "há 1 dia",
-    illustration: "graph",
-    lead: "O que os números não contam sobre performance",
-    body: "Nulla vitae elit libero, a pharetra augue. Vestibulum id ligula porta felis euismod semper. Donec ullamcorper nulla non metus auctor fringilla.",
-    tags: ["#Dados", "#Performance"],
-    likes: 178, comments: 15, reposts: 8,
-    topReactor: "Aline Rocha",
-    comment: { name: "Pedro Henrique", role: "Data Engineer", time: "há 14 h", text: "Concordo, métrica sem contexto vira vaidade." }
-  },
-  {
-    role: "Open Source",
-    time: "há 3 dias",
-    illustration: "branch",
-    lead: "Por que todo projeto deveria aceitar contribuições pequenas",
-    body: "Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Maecenas faucibus mollis interdum.",
-    tags: ["#OpenSource", "#Git"],
-    likes: 265, comments: 33, reposts: 19,
-    topReactor: "Juliana Prado",
-    comment: { name: "Thiago Barros", role: "Mantenedor OSS", time: "há 2 dias", text: "PRs pequenos também são a melhor forma de reter novos contribuidores." }
-  },
-  {
-    role: "Segurança",
-    time: "há 4 dias",
-    illustration: "shield",
-    lead: "Segurança não é feature, é hábito",
-    body: "Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.",
-    tags: ["#Segurança"],
-    likes: 189, comments: 24, reposts: 11,
-    topReactor: "Renata Dias",
-    comment: { name: "Otávio Ferraz", role: "AppSec", time: "há 3 dias", text: "Isso deveria estar em todo onboarding de time de engenharia." }
-  }
-];
-
 const avatarUrl = "https://avatars.githubusercontent.com/u/45015902?v=4";
 
 function initialsOf(name){
@@ -364,7 +295,12 @@ document.addEventListener("click", () => {
 });
 
 const feed = document.getElementById("feed");
-posts.forEach((p, i) => feed.appendChild(renderPost(p, i)));
+fetch("/api/posts")
+  .then(res => res.json())
+  .then(posts => posts.forEach((p, i) => feed.appendChild(renderPost(p, i))))
+  .catch(() => {
+    feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Não foi possível carregar as publicações.</p>';
+  });
 
 /* --- follow button do perfil --- */
 const btnFollow = document.getElementById("btnFollow");

@@ -180,38 +180,6 @@
   .profile-stats b{ font-size:14px; color:var(--cyan); font-family:'JetBrains Mono',monospace; }
   .profile-stats span{ display:block; font-size:11px; color:var(--ink-faint); }
 
-  /* ---------- composer ---------- */
-  .composer{
-    max-width:620px; margin: 16px auto 0; padding: 0 18px;
-  }
-  .composer-card{
-    background:var(--card); border:1px solid var(--line);
-    border-radius: var(--radius); padding:14px 16px;
-  }
-  .composer-top{ display:flex; align-items:center; gap:10px; }
-
-  .composer-input{
-    flex:1; text-align:left;
-    background:var(--card-2); border:1px solid var(--line);
-    border-radius:999px; padding:11px 16px;
-    color:var(--ink-faint); font-size:14px; cursor:pointer;
-    transition: border-color .12s ease;
-  }
-  .composer-input:hover{ border-color:var(--cyan-dim); }
-  .composer-actions{
-    display:flex; gap:4px; margin-top:12px; padding-top:10px;
-    border-top:1px solid var(--line);
-  }
-  .composer-actions button{
-    flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
-    background:none; border:none; cursor:pointer; border-radius:8px;
-    padding:9px 6px; font-size:12.5px; font-weight:600; color:var(--ink-muted);
-    transition: background .12s ease, color .12s ease;
-  }
-  .composer-actions button:hover{ background:var(--card-2); }
-  .composer-actions svg{ width:17px; height:17px; }
-  .c-media:hover{ color:var(--cyan); } .c-event:hover{ color:var(--purple); } .c-article:hover{ color:var(--magenta); }
-
   .feed-heading{
     max-width:620px; margin: 22px auto 4px; padding:0 18px;
     display:flex; align-items:baseline; gap:8px;
@@ -395,7 +363,6 @@
 
   @media (max-width:480px){
     .actions button span{ display:none; }
-    .composer-actions button span{ display:none; }
   }
 </style>
 </head>
@@ -511,24 +478,6 @@
         <div><b id="followerCount">1</b><span>seguidor</span></div>
         <div><b>0</b><span>seguindo</span></div>
         <div><b>1</b><span>repositório público</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="composer">
-    <div class="composer-card">
-      <div class="composer-top">
-        <span class="avatar-frame af-42">
-          <img src="https://avatars.githubusercontent.com/u/45015902?v=4" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-          <span class="avatar-fallback" style="background:linear-gradient(135deg,#00F0FF,#9D4EFF); color:#07070C;">LH</span>
-        </span>
-        <div class="composer-input" id="composerInput">Comece uma publicação, Leandro</div>
-      </div>
-      <div class="composer-actions">
-        <button><svg class="c-media" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Foto</span></button>
-        <button><svg class="c-media" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Vídeo</span></button>
-        <button><svg class="c-event" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Evento</span></button>
-        <button><svg class="c-article" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>Artigo</span></button>
       </div>
     </div>
   </div>
