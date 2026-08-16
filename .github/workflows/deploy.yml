@@ -8,6 +8,28 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install & build frontend assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Load SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Upload built assets
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          rsync -avz --delete public/build/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/blog/public/build/
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
