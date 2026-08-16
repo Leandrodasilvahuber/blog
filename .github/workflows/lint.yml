@@ -6,8 +6,13 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  APP_ENV: testing
+  DB_CONNECTION: sqlite
+  DB_DATABASE: ':memory:'
+
 jobs:
-  lint:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,5 +21,93 @@ jobs:
           php-version: '8.1'
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
-      - name: Run Pint (lint)
+      - name: Cache vendor
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+
+  pint:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+      - name: Run Pint (formatação)
         run: vendor/bin/pint --test
+
+  larastan:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+      - name: Run Larastan (segurança de tipos, nível 8)
+        run: vendor/bin/phpstan analyse --no-progress
+
+  rector:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+      - name: Run Rector (dry-run, checa modernização pendente)
+        run: vendor/bin/rector process --dry-run --no-progress-bar
+
+  phpinsights:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+      - name: Copy .env
+        run: cp .env.example .env
+      - name: Generate app key
+        run: php artisan key:generate
+      - name: Run PHP Insights (qualidade geral)
+        run: php artisan insights --no-interaction --min-quality=80 --min-complexity=80 --min-architecture=80 --min-style=80
+
+  enlightn:
+    needs: setup
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          ini-values: allow_url_fopen=Off, expose_php=Off
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+      - name: Copy .env
+        run: cp .env.example .env
+      - name: Generate app key
+        run: php artisan key:generate
+      - name: Run Enlightn (segurança específica)
+        run: php artisan enlightn --no-interaction
