@@ -22,6 +22,7 @@ trait ValidatesPostData
             'illustration' => ['required', 'string', 'in:'.implode(',', $illustrations)],
             'cover_image' => ['nullable', 'image', 'max:10240'],
             'cover_image_base64' => ['nullable', 'string'],
+            'source_url' => ['nullable', 'url', 'max:1000'],
             'lead' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
             'tags' => ['nullable', 'string'],

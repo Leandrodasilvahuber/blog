@@ -18,6 +18,7 @@ class Post extends Model
         'role',
         'illustration',
         'cover_image_path',
+        'source_url',
         'lead',
         'body',
         'tags',

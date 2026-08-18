@@ -270,6 +270,15 @@
   .illustration svg{ width:78%; height:78%; filter: drop-shadow(0 0 8px rgba(0,240,255,0.25)); }
   .illustration img{ width:100%; height:100%; object-fit:cover; }
 
+  .post-source{
+    padding:10px 16px; border-bottom:1px solid var(--line);
+    font-size:12.5px;
+  }
+  .post-source a{
+    color:var(--ink-faint); text-decoration:none; font-weight:600;
+  }
+  .post-source a:hover{ color:var(--cyan); }
+
   .engagement{
     display:flex; align-items:center; justify-content:space-between; gap:6px;
     padding: 10px 16px 8px;

@@ -163,6 +163,7 @@ function renderPost(p, idx){
       <button class="see-more" data-see-more hidden>...ver mais</button>
     </div>
     <div class="illustration">${p.coverImageUrl ? `<img src="${p.coverImageUrl}" alt="" loading="lazy">` : illustrations[p.illustration]}</div>
+    ${p.sourceUrl ? `<div class="post-source"><a href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Ver notícia original ↗</a></div>` : ""}
     <div class="engagement">
       <div class="engagement-left">
         <div class="reaction-icons">
