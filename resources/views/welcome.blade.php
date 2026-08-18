@@ -271,13 +271,19 @@
   .illustration img{ width:100%; height:100%; object-fit:cover; }
 
   .post-source{
-    padding:10px 16px; border-bottom:1px solid var(--line);
-    font-size:12.5px;
+    padding:14px 16px; border-bottom:1px solid var(--line);
+    display:flex; justify-content:center;
   }
   .post-source a{
-    color:var(--ink-faint); text-decoration:none; font-weight:600;
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--cyan); color:#07070C; text-decoration:none;
+    padding:10px 22px; border-radius:8px;
+    font-size:15px; font-weight:700;
+    box-shadow: var(--glow-cyan);
+    transition: filter .12s ease, transform .08s ease;
   }
-  .post-source a:hover{ color:var(--cyan); }
+  .post-source a:hover{ filter:brightness(1.12); }
+  .post-source a:active{ transform: scale(.96); }
 
   .engagement{
     display:flex; align-items:center; justify-content:space-between; gap:6px;
