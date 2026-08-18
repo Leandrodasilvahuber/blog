@@ -17,6 +17,7 @@ class PostController extends Controller
             'role' => $post->role,
             'time' => $post->time_label,
             'illustration' => $post->illustration,
+            'coverImageUrl' => $post->cover_image_url,
             'lead' => $post->lead,
             'body' => $post->body,
             'tags' => $post->tags ?? [],

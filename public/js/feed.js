@@ -162,13 +162,13 @@ function renderPost(p, idx){
       <div class="post-body" data-body>${withHashtags(p.body, p.tags)}</div>
       <button class="see-more" data-see-more hidden>...ver mais</button>
     </div>
-    <div class="illustration">${illustrations[p.illustration]}</div>
+    <div class="illustration">${p.coverImageUrl ? `<img src="${p.coverImageUrl}" alt="" loading="lazy">` : illustrations[p.illustration]}</div>
     <div class="engagement">
       <div class="engagement-left">
         <div class="reaction-icons">
           <span style="background:#00F0FF">👍</span><span style="background:#FF2E9A">❤️</span><span style="background:#9D4EFF">👏</span>
         </div>
-        <span class="count-text"><b data-like-count>${p.likes}</b> · ${p.topReactor} e outras pessoas</span>
+        <span class="count-text"><b data-like-count>${p.likes}</b>${p.topReactor ? ` · ${p.topReactor} e outras pessoas` : ""}</span>
       </div>
       <div class="engagement-right">
         <span data-open-comments>${p.comments} comentários</span>
@@ -187,6 +187,7 @@ function renderPost(p, idx){
       <div class="action-wrap"><button>${icon("send")}<span>Enviar</span></button></div>
     </div>
     <div class="comments" data-comments>
+      ${p.comment && p.comment.name ? `
       <div class="comment">
         ${avatarBlock(p.comment.name, null, "af-32")}
         <div>
@@ -196,7 +197,7 @@ function renderPost(p, idx){
           </div>
           <div class="comment-meta"><span>Gostei</span><span>Responder</span><span>${p.comment.time}</span></div>
         </div>
-      </div>
+      </div>` : ""}
       <div class="comment-compose">
         ${avatarBlock("Leandro Hüber", avatarUrl, "af-32")}
         <div class="comment-field">

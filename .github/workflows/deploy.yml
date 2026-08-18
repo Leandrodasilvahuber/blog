@@ -45,6 +45,7 @@ jobs:
             git fetch origin producao
             git reset --hard origin/producao
             composer install --no-dev --optimize-autoloader --no-interaction
+            php artisan storage:link || true
             php artisan migrate --force
             php artisan db:seed --class="Database\\Seeders\\AdminUserSeeder" --force
             php artisan config:cache

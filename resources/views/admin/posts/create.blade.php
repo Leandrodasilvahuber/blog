@@ -5,7 +5,7 @@
 @section('content')
   <h1>Nova publicação</h1>
   <div class="card">
-    <form method="POST" action="{{ route('admin.posts.store') }}">
+    <form method="POST" action="{{ route('admin.posts.store') }}" enctype="multipart/form-data">
       @csrf
       @include('admin.posts._form')
       <div class="actions-bottom">
