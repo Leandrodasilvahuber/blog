@@ -12,7 +12,7 @@ class PostController extends Controller
 {
     public function index(): JsonResponse
     {
-        $posts = Post::orderByDesc('published_at')->get()->map(fn (Post $post) => [
+        $posts = Post::orderByDesc('published_at')->paginate(20)->through(fn (Post $post) => [
             'id' => $post->id,
             'role' => $post->role,
             'time' => $post->time_label,

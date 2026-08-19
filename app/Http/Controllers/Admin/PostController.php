@@ -15,8 +15,6 @@ class PostController extends Controller
 {
     use ValidatesPostData;
 
-    private const ILLUSTRATIONS = ['brain', 'cloud', 'terminal', 'graph', 'branch', 'shield'];
-
     public function index(): View
     {
         $posts = Post::orderByDesc('published_at')->paginate(15);

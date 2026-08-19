@@ -308,7 +308,7 @@ document.addEventListener("click", () => {
 const feed = document.getElementById("feed");
 fetch("/api/posts")
   .then(res => res.json())
-  .then(posts => posts.forEach((p, i) => feed.appendChild(renderPost(p, i))))
+  .then(payload => payload.data.forEach((p, i) => feed.appendChild(renderPost(p, i))))
   .catch(() => {
     feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Não foi possível carregar as publicações.</p>';
   });

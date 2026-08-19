@@ -106,3 +106,72 @@ jobs:
           key: vendor-${{ runner.os }}-${{ github.sha }}
       - name: Run composer audit (dependências vulneráveis)
         run: composer audit
+
+  tests:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+      - name: Copy .env
+        run: cp .env.example .env
+      - name: Generate app key
+        run: php artisan key:generate
+      - name: Run Feature/Unit tests
+        run: php artisan test
+
+  dusk:
+    needs: setup
+    runs-on: ubuntu-latest
+    env:
+      APP_ENV: testing
+      APP_URL: http://127.0.0.1:8000
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ${{ github.workspace }}/database/database.sqlite
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, sqlite3, pdo_sqlite, dom, curl, zip
+      - uses: actions/cache@v4
+        with:
+          path: vendor
+          key: vendor-${{ runner.os }}-${{ github.sha }}
+      - name: Copy .env
+        run: cp .env.example .env
+      - name: Generate app key
+        run: php artisan key:generate
+      - name: Run migrations
+        run: php artisan migrate --force
+      - name: Install matching ChromeDriver
+        run: php artisan dusk:chrome-driver --detect
+      - name: Start Laravel server
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 &
+          for i in $(seq 1 20); do
+            curl -sf http://127.0.0.1:8000/ > /dev/null && break
+            sleep 1
+          done
+      - name: Run Dusk (testes end-to-end)
+        run: vendor/bin/phpunit -c phpunit.dusk.xml
+      - name: Upload Dusk screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dusk-screenshots
+          path: tests/Browser/screenshots
+          if-no-files-found: ignore
+      - name: Upload Dusk console logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dusk-console
+          path: tests/Browser/console
+          if-no-files-found: ignore

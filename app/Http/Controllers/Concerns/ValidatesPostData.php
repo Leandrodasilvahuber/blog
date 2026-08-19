@@ -7,15 +7,20 @@ namespace App\Http\Controllers\Concerns;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 trait ValidatesPostData
 {
+    public const ILLUSTRATIONS = ['brain', 'cloud', 'terminal', 'graph', 'branch', 'shield'];
+
+    private const MAX_COVER_IMAGE_BYTES = 10240 * 1024;
+
     /**
      * @return array<string, mixed>
      */
     private function validatedPostData(Request $request): array
     {
-        $illustrations = ['brain', 'cloud', 'terminal', 'graph', 'branch', 'shield'];
+        $illustrations = self::ILLUSTRATIONS;
 
         $data = $request->validate([
             'role' => ['required', 'string', 'max:255'],
@@ -68,8 +73,16 @@ trait ValidatesPostData
         if ($base64) {
             $conteudo = preg_replace('/^data:image\/\w+;base64,/', '', $base64) ?? $base64;
             $bytes = base64_decode($conteudo, true);
-            if ($bytes === false) {
-                return null;
+            if ($bytes === false || strlen($bytes) > self::MAX_COVER_IMAGE_BYTES) {
+                throw ValidationException::withMessages([
+                    'cover_image_base64' => 'A imagem de capa é inválida ou excede o tamanho máximo de 10MB.',
+                ]);
+            }
+
+            if (@getimagesizefromstring($bytes) === false) {
+                throw ValidationException::withMessages([
+                    'cover_image_base64' => 'O conteúdo enviado não é uma imagem válida.',
+                ]);
             }
 
             $nome = 'covers/'.Str::uuid()->toString().'.png';

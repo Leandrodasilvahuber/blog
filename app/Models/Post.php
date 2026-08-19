@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,6 +16,9 @@ use Illuminate\Support\Facades\Storage;
  */
 class Post extends Model
 {
+    /** @use HasFactory<PostFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'role',
         'illustration',
