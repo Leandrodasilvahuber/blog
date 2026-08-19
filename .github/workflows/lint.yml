@@ -2,9 +2,9 @@ name: Lint
 
 on:
   push:
-    branches: [master, producao]
+    branches: [master]
   pull_request:
-    branches: [master, producao]
+    branches: [master]
 
 env:
   APP_ENV: testing
