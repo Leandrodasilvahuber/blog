@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\Admin\VideoController as AdminVideoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,5 +27,6 @@ Route::prefix('adm')->name('admin.')->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::resource('posts', AdminPostController::class)->except(['show']);
+        Route::resource('videos', AdminVideoController::class)->except(['show']);
     });
 });

@@ -400,6 +400,11 @@
     text-align:center; font-size:12px; color:var(--ink-faint); font-family:'JetBrains Mono',monospace;
   }
 
+  /* ---------- vídeos (renderizados como posts, com player embutido) ---------- */
+  .videos-section{ margin-top:36px; scroll-margin-top:90px; }
+  .illustration iframe{ width:100%; height:100%; display:block; border:0; }
+  .video-empty{ color:var(--ink-faint); font-size:13px; text-align:center; padding:24px; }
+
   /* ---------- responsive breakpoints ---------- */
   @media (max-width:1120px){
     .page{ grid-template-columns: 248px minmax(0,1fr); }
@@ -503,10 +508,6 @@
           <p class="profile-headline">Redação jornalística orquestrada por IA — notícias redigidas por automação inteligente, com curadoria e revisão humana no processo.</p>
           <div class="profile-meta">
             <span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 22V12h6v10M3 10l9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-              <a href="https://leandrohuber.com.br" target="_blank" rel="noopener">leandrohuber.com.br</a>
-            </span>
-            <span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 1.5 5 1.5 5 1.5c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 8.5c0 3.5 3 5.5 6 5.5a4.8 4.8 0 0 0-1 3.5v4"/></svg>
               <a href="https://github.com/Leandrodasilvahuber" target="_blank" rel="noopener">github.com/Leandrodasilvahuber</a>
             </span>
@@ -524,9 +525,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           Feed
         </a>
-        <a href="https://leandrohuber.com.br" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
-          Site pessoal
+        <a href="#videos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          Vídeos
         </a>
         <a href="/adm">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
@@ -539,6 +540,11 @@
       <p class="feed-heading">últimas publicações</p>
       <div class="feed" id="feed"></div>
       <p class="end">você chegou ao fim do feed — volte em breve para novas publicações.</p>
+
+      <section class="videos-section" id="videos">
+        <p class="feed-heading">vídeos</p>
+        <div class="feed" id="videoGrid"></div>
+      </section>
     </main>
 
     <aside class="sidebar-right">
@@ -561,5 +567,6 @@
   </div>
 
 <script src="{{ asset('js/feed.js') }}"></script>
+<script src="{{ asset('js/videos.js') }}"></script>
 </body>
 </html>
