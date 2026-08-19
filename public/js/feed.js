@@ -85,8 +85,17 @@ const illustrations = {
   </svg>`
 };
 
-/* ===== conteúdo de exemplo (lorem ipsum) ===== */
-const avatarUrl = "https://avatars.githubusercontent.com/u/45015902?v=4";
+/* ===== avatar do autor: logo do site, não foto pessoal ===== */
+const logoSvg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="feedLogoGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#9D4EFF"/>
+  </linearGradient></defs>
+  <rect width="100" height="100" fill="url(#feedLogoGrad)"/>
+  <path d="M16 32 L6 50 L16 68" stroke="#07070C" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+  <path d="M84 32 L94 50 L84 68" stroke="#07070C" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+  <text x="50" y="64" font-family="Chakra Petch, sans-serif" font-size="38" font-weight="700" fill="#07070C" text-anchor="middle">LH</text>
+</svg>`;
+const avatarUrl = "data:image/svg+xml," + encodeURIComponent(logoSvg);
 
 function initialsOf(name){
   return name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
