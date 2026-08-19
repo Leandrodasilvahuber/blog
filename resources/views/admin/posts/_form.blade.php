@@ -11,6 +11,15 @@
   @endforeach
 </select>
 
+<label for="cover_image">Imagem de capa (opcional, sobrepõe a ilustração acima)</label>
+@if (!empty($post?->cover_image_url))
+  <p><img src="{{ $post->cover_image_url }}" alt="" style="max-width:240px;display:block;margin-bottom:8px;border-radius:8px;"></p>
+@endif
+<input type="file" id="cover_image" name="cover_image" accept="image/*">
+
+<label for="source_url">Link da notícia original (opcional)</label>
+<input type="url" id="source_url" name="source_url" value="{{ old('source_url', $post->source_url ?? '') }}" placeholder="https://...">
+
 <label for="body">Conteúdo</label>
 <textarea id="body" name="body" required>{{ old('body', $post->body ?? '') }}</textarea>
 

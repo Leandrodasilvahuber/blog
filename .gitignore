@@ -9,7 +9,12 @@
 .env
 .env.backup
 .env.production
+.env.dusk.local
 .phpunit.result.cache
+/database/database.dusk.sqlite
+/tests/Browser/console
+/tests/Browser/screenshots
+/tests/Browser/source
 Homestead.json
 Homestead.yaml
 auth.json

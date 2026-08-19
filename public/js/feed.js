@@ -85,8 +85,17 @@ const illustrations = {
   </svg>`
 };
 
-/* ===== conteúdo de exemplo (lorem ipsum) ===== */
-const avatarUrl = "https://avatars.githubusercontent.com/u/45015902?v=4";
+/* ===== avatar do autor: logo do site, não foto pessoal ===== */
+const logoSvg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="feedLogoGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#9D4EFF"/>
+  </linearGradient></defs>
+  <rect width="100" height="100" fill="url(#feedLogoGrad)"/>
+  <path d="M16 32 L6 50 L16 68" stroke="#07070C" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+  <path d="M84 32 L94 50 L84 68" stroke="#07070C" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+  <text x="50" y="64" font-family="Chakra Petch, sans-serif" font-size="38" font-weight="700" fill="#07070C" text-anchor="middle">LH</text>
+</svg>`;
+const avatarUrl = "data:image/svg+xml," + encodeURIComponent(logoSvg);
 
 function initialsOf(name){
   return name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
@@ -162,13 +171,14 @@ function renderPost(p, idx){
       <div class="post-body" data-body>${withHashtags(p.body, p.tags)}</div>
       <button class="see-more" data-see-more hidden>...ver mais</button>
     </div>
-    <div class="illustration">${illustrations[p.illustration]}</div>
+    <div class="illustration">${p.coverImageUrl ? `<img src="${p.coverImageUrl}" alt="" loading="lazy">` : illustrations[p.illustration]}</div>
+    ${p.sourceUrl ? `<div class="post-source"><a href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Ver notícia original ↗</a></div>` : ""}
     <div class="engagement">
       <div class="engagement-left">
         <div class="reaction-icons">
           <span style="background:#00F0FF">👍</span><span style="background:#FF2E9A">❤️</span><span style="background:#9D4EFF">👏</span>
         </div>
-        <span class="count-text"><b data-like-count>${p.likes}</b> · ${p.topReactor} e outras pessoas</span>
+        <span class="count-text"><b data-like-count>${p.likes}</b>${p.topReactor ? ` · ${p.topReactor} e outras pessoas` : ""}</span>
       </div>
       <div class="engagement-right">
         <span data-open-comments>${p.comments} comentários</span>
@@ -187,6 +197,7 @@ function renderPost(p, idx){
       <div class="action-wrap"><button>${icon("send")}<span>Enviar</span></button></div>
     </div>
     <div class="comments" data-comments>
+      ${p.comment && p.comment.name ? `
       <div class="comment">
         ${avatarBlock(p.comment.name, null, "af-32")}
         <div>
@@ -196,7 +207,7 @@ function renderPost(p, idx){
           </div>
           <div class="comment-meta"><span>Gostei</span><span>Responder</span><span>${p.comment.time}</span></div>
         </div>
-      </div>
+      </div>` : ""}
       <div class="comment-compose">
         ${avatarBlock("Leandro Hüber", avatarUrl, "af-32")}
         <div class="comment-field">
@@ -297,7 +308,7 @@ document.addEventListener("click", () => {
 const feed = document.getElementById("feed");
 fetch("/api/posts")
   .then(res => res.json())
-  .then(posts => posts.forEach((p, i) => feed.appendChild(renderPost(p, i))))
+  .then(payload => payload.data.forEach((p, i) => feed.appendChild(renderPost(p, i))))
   .catch(() => {
     feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Não foi possível carregar as publicações.</p>';
   });

@@ -5,7 +5,7 @@
 @section('content')
   <h1>Editar publicação</h1>
   <div class="card">
-    <form method="POST" action="{{ route('admin.posts.update', $post) }}">
+    <form method="POST" action="{{ route('admin.posts.update', $post) }}" enctype="multipart/form-data">
       @csrf
       @method('PUT')
       @include('admin.posts._form')
