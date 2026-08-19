@@ -62,6 +62,26 @@ trait ValidatesPostData
         return $data;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    private function validatedCoverImageData(Request $request): array
+    {
+        $request->validate([
+            'cover_image' => ['nullable', 'image', 'max:10240'],
+            'cover_image_base64' => ['required_without:cover_image', 'nullable', 'string'],
+        ]);
+
+        $coverImagePath = $this->armazenarImagemCapa($request, $request->input('cover_image_base64'));
+        if ($coverImagePath === null) {
+            throw ValidationException::withMessages([
+                'cover_image_base64' => 'Envie cover_image ou cover_image_base64.',
+            ]);
+        }
+
+        return ['cover_image_path' => $coverImagePath];
+    }
+
     private function armazenarImagemCapa(Request $request, ?string $base64): ?string
     {
         if ($request->hasFile('cover_image')) {

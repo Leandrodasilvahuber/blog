@@ -26,5 +26,6 @@ Route::get('/videos', [ApiVideoController::class, 'index'])->name('api.videos.in
 
 Route::middleware('auth:sanctum')->prefix('adm')->group(function () {
     Route::post('/posts', [ApiAdminPostController::class, 'store']);
+    Route::put('/posts/{post}/cover', [ApiAdminPostController::class, 'updateCover']);
     Route::delete('/posts/{post}', [ApiAdminPostController::class, 'destroy']);
 });
