@@ -21,7 +21,7 @@ class PostController extends Controller
     {
         $posts = Post::orderByDesc('published_at')->paginate(15);
 
-        return view('admin.posts.index', compact('posts'));
+        return view('admin.posts.index', ['posts' => $posts]);
     }
 
     public function create(): View

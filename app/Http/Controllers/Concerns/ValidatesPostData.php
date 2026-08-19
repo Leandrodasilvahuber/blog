@@ -49,7 +49,7 @@ trait ValidatesPostData
             ->values()
             ->all();
 
-        $data['published_at'] = $data['published_at'] ?? now();
+        $data['published_at'] ??= now();
         $data['likes'] ??= 0;
         $data['comments'] ??= 0;
         $data['reposts'] ??= 0;
@@ -60,11 +60,13 @@ trait ValidatesPostData
     private function armazenarImagemCapa(Request $request, ?string $base64): ?string
     {
         if ($request->hasFile('cover_image')) {
-            return $request->file('cover_image')->store('covers', 'public');
+            $path = $request->file('cover_image')->store('covers', 'public');
+
+            return $path === false ? null : $path;
         }
 
         if ($base64) {
-            $conteudo = preg_replace('/^data:image\/\w+;base64,/', '', $base64);
+            $conteudo = preg_replace('/^data:image\/\w+;base64,/', '', $base64) ?? $base64;
             $bytes = base64_decode($conteudo, true);
             if ($bytes === false) {
                 return null;
