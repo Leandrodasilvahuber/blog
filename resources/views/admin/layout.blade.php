@@ -103,6 +103,7 @@
     <nav>
       <a href="{{ route('admin.posts.index') }}" class="{{ request()->routeIs('admin.posts.*') ? 'is-active' : '' }}">Publicações</a>
       <a href="{{ route('admin.videos.index') }}" class="{{ request()->routeIs('admin.videos.*') ? 'is-active' : '' }}">Vídeos</a>
+      <a href="{{ route('admin.settings.edit') }}" class="{{ request()->routeIs('admin.settings.*', 'admin.companies.*') ? 'is-active' : '' }}">Configurações</a>
       <a href="/" target="_blank">Ver site</a>
       <form method="POST" action="{{ route('admin.logout') }}">
         @csrf
