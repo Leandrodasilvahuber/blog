@@ -127,15 +127,11 @@ const REACTIONS = [
 function icon(name){
   const icons = {
     like: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>',
-    comment: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-    repost: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>',
-    send: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
     globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>',
     dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
     save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
     hide: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
-    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>',
-    emoji: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/></svg>'
+    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>'
   };
   return icons[name] || "";
 }
@@ -180,10 +176,6 @@ function renderPost(p, idx){
         </div>
         <span class="count-text"><b data-like-count>${p.likes}</b>${p.topReactor ? ` · ${p.topReactor} e outras pessoas` : ""}</span>
       </div>
-      <div class="engagement-right">
-        <span data-open-comments>${p.comments} comentários</span>
-        <span>${p.reposts} reposts</span>
-      </div>
     </div>
     <div class="actions">
       <div class="action-wrap">
@@ -192,35 +184,11 @@ function renderPost(p, idx){
         </div>
         <button data-like-btn>${icon("like")}<span data-like-label>Gostei</span></button>
       </div>
-      <div class="action-wrap"><button data-comment-btn>${icon("comment")}<span>Comentar</span></button></div>
-      <div class="action-wrap"><button data-repost-btn>${icon("repost")}<span data-repost-label>Repostar</span></button></div>
-      <div class="action-wrap"><button>${icon("send")}<span>Enviar</span></button></div>
-    </div>
-    <div class="comments" data-comments>
-      ${p.comment && p.comment.name ? `
-      <div class="comment">
-        ${avatarBlock(p.comment.name, null, "af-32")}
-        <div>
-          <div class="comment-bubble">
-            <span class="comment-name">${p.comment.name}</span><span class="comment-role"> · ${p.comment.role}</span>
-            <div class="comment-text">${p.comment.text}</div>
-          </div>
-          <div class="comment-meta"><span>Gostei</span><span>Responder</span><span>${p.comment.time}</span></div>
-        </div>
-      </div>` : ""}
-      <div class="comment-compose">
-        ${avatarBlock("Leandro Hüber", avatarUrl, "af-32")}
-        <div class="comment-field">
-          <input type="text" placeholder="Adicione um comentário...">
-          ${icon("emoji")}
-        </div>
-      </div>
     </div>
   `;
 
   /* --- estado --- */
   let liked = false, likeCount = p.likes, currentReaction = null;
-  let reposted = false, repostCount = p.reposts;
 
   const likeBtn = el.querySelector("[data-like-btn]");
   const likeCountEl = el.querySelector("[data-like-count]");
@@ -260,21 +228,6 @@ function renderPost(p, idx){
       setReaction(r);
     });
   });
-
-  /* --- repost --- */
-  const repostBtn = el.querySelector("[data-repost-btn]");
-  const repostLabel = el.querySelector("[data-repost-label]");
-  repostBtn.addEventListener("click", () => {
-    reposted = !reposted;
-    repostBtn.classList.toggle("reposted", reposted);
-    repostLabel.textContent = reposted ? "Repostado" : "Repostar";
-  });
-
-  /* --- comentários --- */
-  const commentsBox = el.querySelector("[data-comments]");
-  const openComments = () => commentsBox.classList.toggle("open");
-  el.querySelector("[data-comment-btn]").addEventListener("click", openComments);
-  el.querySelector("[data-open-comments]").addEventListener("click", openComments);
 
   /* --- menu "..." --- */
   const moreBtn = el.querySelector("[data-more]");
