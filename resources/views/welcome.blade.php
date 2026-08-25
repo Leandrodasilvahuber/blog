@@ -590,7 +590,7 @@
 
   </div>
 
-<script src="{{ asset('js/feed.js') }}"></script>
-<script src="{{ asset('js/videos.js') }}"></script>
+<script src="{{ asset('js/feed.js') }}?v={{ filemtime(public_path('js/feed.js')) }}"></script>
+<script src="{{ asset('js/videos.js') }}?v={{ filemtime(public_path('js/videos.js')) }}"></script>
 </body>
 </html>
