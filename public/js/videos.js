@@ -47,12 +47,16 @@ if (videoGrid) {
     .then(res => res.json())
     .then(payload => {
       if (!payload.data.length) {
-        videoGrid.innerHTML = '<p class="video-empty">Nenhum vídeo publicado ainda.</p>';
+        if (!videoGrid.children.length) {
+          videoGrid.innerHTML = '<p class="video-empty">Nenhum vídeo publicado ainda.</p>';
+        }
         return;
       }
       payload.data.forEach(v => videoGrid.appendChild(renderVideoPost(v)));
     })
     .catch(() => {
-      videoGrid.innerHTML = '<p class="video-empty">Não foi possível carregar os vídeos.</p>';
+      if (!videoGrid.children.length) {
+        videoGrid.innerHTML = '<p class="video-empty">Não foi possível carregar os vídeos.</p>';
+      }
     });
 }

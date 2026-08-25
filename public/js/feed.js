@@ -141,6 +141,66 @@ function withHashtags(body, tags){
   return `${body} ${inline}`;
 }
 
+/* ===== posts cujo link original é um vídeo do YouTube: caem na coluna lateral ===== */
+function extractYoutubeId(url){
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1) || null;
+    if (u.hostname.includes("youtube.com")) {
+      if (u.pathname === "/watch") return u.searchParams.get("v");
+      if (u.pathname.startsWith("/embed/")) return u.pathname.split("/embed/")[1] || null;
+    }
+  } catch (e) {}
+  return null;
+}
+function isYoutubePost(p){
+  return !!extractYoutubeId(p.sourceUrl);
+}
+
+function renderPostAsVideo(p){
+  const embedUrl = `https://www.youtube.com/embed/${extractYoutubeId(p.sourceUrl)}`;
+  const el = document.createElement("article");
+  el.className = "post";
+  el.innerHTML = `
+    <div class="post-head">
+      ${avatarBlock("Leandro Hüber", avatarUrl, "af-42")}
+      <div class="post-who">
+        <div class="post-name-line">
+          <span class="post-name">Leandro Hüber</span>
+          <span class="post-degree">· 1º</span>
+        </div>
+        <div class="post-role">${p.role}</div>
+        <div class="post-time">${p.time} · ${icon("globe")}</div>
+      </div>
+    </div>
+    <div class="post-text">
+      <span class="lead">${p.lead}</span>
+      <div class="post-body" data-body>${withHashtags(p.body, p.tags)}</div>
+      <button class="see-more" data-see-more hidden>...ver mais</button>
+    </div>
+    <div class="illustration">
+      <iframe src="${embedUrl}" title="${p.lead}" loading="lazy"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="post-source"><a href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Assistir no YouTube ↗</a></div>
+  `;
+
+  const bodyEl = el.querySelector("[data-body]");
+  const seeMoreBtn = el.querySelector("[data-see-more]");
+  requestAnimationFrame(() => {
+    if (bodyEl.scrollHeight > bodyEl.clientHeight + 2) {
+      seeMoreBtn.hidden = false;
+      seeMoreBtn.addEventListener("click", () => {
+        bodyEl.classList.add("expanded");
+        seeMoreBtn.hidden = true;
+      });
+    }
+  });
+
+  return el;
+}
+
 function renderPost(p, idx){
   const el = document.createElement("article");
   el.className = "post";
@@ -259,9 +319,16 @@ document.addEventListener("click", () => {
 });
 
 const feed = document.getElementById("feed");
+const videoGrid = document.getElementById("videoGrid");
 fetch("/api/posts")
   .then(res => res.json())
-  .then(payload => payload.data.forEach((p, i) => feed.appendChild(renderPost(p, i))))
+  .then(payload => payload.data.forEach((p, i) => {
+    if (isYoutubePost(p)) {
+      if (videoGrid) videoGrid.appendChild(renderPostAsVideo(p));
+    } else {
+      feed.appendChild(renderPost(p, i));
+    }
+  }))
   .catch(() => {
     feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Não foi possível carregar as publicações.</p>';
   });
