@@ -1,62 +1,28 @@
-function renderVideoPost(v){
-  const el = document.createElement("article");
-  el.className = "post";
-  el.innerHTML = `
-    <div class="post-head">
-      ${avatarBlock("Leandro Hüber", avatarUrl, "af-42")}
-      <div class="post-who">
-        <div class="post-name-line">
-          <span class="post-name">Leandro Hüber</span>
-          <span class="post-degree">· 1º</span>
-        </div>
-        <div class="post-role">Vídeo</div>
-        <div class="post-time">${v.time} · ${icon("globe")}</div>
-      </div>
-    </div>
-    <div class="post-text">
-      <span class="lead">${v.title}</span>
-      ${v.description ? `<div class="post-body" data-body>${v.description}</div><button class="see-more" data-see-more hidden>...ver mais</button>` : ""}
-    </div>
-    <div class="illustration">
-      <iframe src="${v.embedUrl}" title="${v.title}" loading="lazy"
-        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-    <div class="post-source"><a href="${v.watchUrl}" target="_blank" rel="noopener noreferrer">Assistir no YouTube ↗</a></div>
-  `;
+(function(){
+  const videoGrid = document.getElementById("videoGrid");
+  if (!videoGrid) return;
 
-  const bodyEl = el.querySelector("[data-body]");
-  const seeMoreBtn = el.querySelector("[data-see-more]");
-  if (bodyEl && seeMoreBtn) {
-    requestAnimationFrame(() => {
-      if (bodyEl.scrollHeight > bodyEl.clientHeight + 2) {
-        seeMoreBtn.hidden = false;
-        seeMoreBtn.addEventListener("click", () => {
-          bodyEl.classList.add("expanded");
-          seeMoreBtn.hidden = true;
-        });
-      }
-    });
+  for (let i = 0; i < 2; i++) {
+    const sk = document.createElement("div");
+    sk.className = "skeleton-row video-skeleton";
+    sk.innerHTML = `<div class="skeleton-block" style="width:104px;aspect-ratio:16/9;flex-shrink:0;"></div>
+      <div class="skeleton-lines"><span style="width:85%"></span><span style="width:50%"></span></div>`;
+    videoGrid.appendChild(sk);
   }
 
-  return el;
-}
-
-const videoGrid = document.getElementById("videoGrid");
-if (videoGrid) {
   fetch("/api/videos")
     .then(res => res.json())
     .then(payload => {
-      if (!payload.data.length) {
-        if (!videoGrid.children.length) {
-          videoGrid.innerHTML = '<p class="video-empty">Nenhum vídeo publicado ainda.</p>';
-        }
-        return;
+      videoGrid.querySelectorAll(".video-skeleton").forEach(el => el.remove());
+      payload.data.forEach(v => videoGrid.appendChild(window.renderVideoCard(v)));
+      if (!videoGrid.querySelector(".video-card")) {
+        videoGrid.innerHTML = '<p class="video-empty">Nenhum vídeo publicado ainda.</p>';
       }
-      payload.data.forEach(v => videoGrid.appendChild(renderVideoPost(v)));
     })
     .catch(() => {
-      if (!videoGrid.children.length) {
+      videoGrid.querySelectorAll(".video-skeleton").forEach(el => el.remove());
+      if (!videoGrid.querySelector(".video-card")) {
         videoGrid.innerHTML = '<p class="video-empty">Não foi possível carregar os vídeos.</p>';
       }
     });
-}
+})();

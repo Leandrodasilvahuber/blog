@@ -158,52 +158,41 @@ function isYoutubePost(p){
   return !!extractYoutubeId(p.sourceUrl);
 }
 
-function renderPostAsVideo(p){
-  const embedUrl = `https://www.youtube.com/embed/${extractYoutubeId(p.sourceUrl)}`;
-  const el = document.createElement("article");
-  el.className = "post";
+function renderVideoCard(v){
+  const el = document.createElement("a");
+  el.className = "video-card";
+  el.href = v.watchUrl;
+  el.target = "_blank";
+  el.rel = "noopener noreferrer";
   el.innerHTML = `
-    <div class="post-head">
-      ${avatarBlock("Leandro Hüber", avatarUrl, "af-42")}
-      <div class="post-who">
-        <div class="post-name-line">
-          <span class="post-name">Leandro Hüber</span>
-          <span class="post-degree">· 1º</span>
-        </div>
-        <div class="post-role">${p.role}</div>
-        <div class="post-time">${p.time} · ${icon("globe")}</div>
-      </div>
-    </div>
-    <div class="post-text">
-      <span class="lead">${p.lead}</span>
-      <div class="post-body" data-body>${withHashtags(p.body, p.tags)}</div>
-      <button class="see-more" data-see-more hidden>...ver mais</button>
-    </div>
-    <div class="illustration">
-      <iframe src="${embedUrl}" title="${p.lead}" loading="lazy"
-        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-    <div class="post-source"><a href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Assistir no YouTube ↗</a></div>
+    <span class="video-thumb">
+      <img src="${v.thumbnailUrl}" alt="" loading="lazy">
+      <span class="video-play">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+    </span>
+    <span class="video-meta">
+      <span class="video-title">${v.title}</span>
+      <span class="video-time">${v.time}</span>
+    </span>
   `;
-
-  const bodyEl = el.querySelector("[data-body]");
-  const seeMoreBtn = el.querySelector("[data-see-more]");
-  requestAnimationFrame(() => {
-    if (bodyEl.scrollHeight > bodyEl.clientHeight + 2) {
-      seeMoreBtn.hidden = false;
-      seeMoreBtn.addEventListener("click", () => {
-        bodyEl.classList.add("expanded");
-        seeMoreBtn.hidden = true;
-      });
-    }
-  });
-
   return el;
 }
+window.renderVideoCard = renderVideoCard;
 
-function renderPost(p, idx){
+function renderPostAsVideo(p){
+  const ytId = extractYoutubeId(p.sourceUrl);
+  return renderVideoCard({
+    title: p.lead,
+    time: p.time,
+    thumbnailUrl: `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`,
+    watchUrl: p.sourceUrl
+  });
+}
+
+function renderPost(p, idx, featured){
   const el = document.createElement("article");
-  el.className = "post";
+  el.className = featured ? "post featured" : "post";
   el.innerHTML = `
     <div class="post-head">
       ${avatarBlock("Leandro Hüber", avatarUrl, "af-42")}
@@ -227,7 +216,10 @@ function renderPost(p, idx){
       <div class="post-body" data-body>${withHashtags(p.body, p.tags)}</div>
       <button class="see-more" data-see-more hidden>...ver mais</button>
     </div>
-    <div class="illustration">${p.coverImageUrl ? `<img src="${p.coverImageUrl}" alt="" loading="lazy">` : illustrations[p.illustration]}</div>
+    <div class="illustration">
+      ${featured ? `<span class="featured-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8-6.3 3.8 1.7-7-5.4-4.7 7.1-.6z"/></svg>Em destaque</span>` : ""}
+      ${p.coverImageUrl ? `<img src="${p.coverImageUrl}" alt="" loading="lazy">` : illustrations[p.illustration]}
+    </div>
     ${p.sourceUrl ? `<div class="post-source"><a href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Ver notícia original ↗</a></div>` : ""}
     <div class="engagement">
       <div class="engagement-left">
@@ -318,17 +310,50 @@ document.addEventListener("click", () => {
   document.querySelectorAll(".more-menu.open").forEach(m => m.classList.remove("open"));
 });
 
+function skeletonPost(withCover){
+  const el = document.createElement("div");
+  el.className = "skeleton-post";
+  el.innerHTML = `
+    <div class="skeleton-row">
+      <div class="skeleton-block skeleton-avatar"></div>
+      <div class="skeleton-lines">
+        <span style="width:40%"></span>
+        <span style="width:65%"></span>
+      </div>
+    </div>
+    <div class="skeleton-lines">
+      <span style="width:90%"></span>
+      <span style="width:75%"></span>
+    </div>
+    ${withCover ? '<div class="skeleton-block skeleton-cover"></div>' : ""}
+  `;
+  return el;
+}
+
 const feed = document.getElementById("feed");
 const videoGrid = document.getElementById("videoGrid");
+
+for (let i = 0; i < 4; i++) feed.appendChild(skeletonPost(true));
+
 fetch("/api/posts")
   .then(res => res.json())
-  .then(payload => payload.data.forEach((p, i) => {
-    if (isYoutubePost(p)) {
-      if (videoGrid) videoGrid.appendChild(renderPostAsVideo(p));
-    } else {
-      feed.appendChild(renderPost(p, i));
+  .then(payload => {
+    feed.innerHTML = "";
+    let mainIdx = 0;
+    payload.data.forEach((p) => {
+      if (isYoutubePost(p)) {
+        if (videoGrid) videoGrid.appendChild(renderPostAsVideo(p));
+      } else {
+        const card = renderPost(p, mainIdx, mainIdx === 0);
+        card.style.animationDelay = `${Math.min(mainIdx, 6) * 60}ms`;
+        feed.appendChild(card);
+        mainIdx++;
+      }
+    });
+    if (!mainIdx) {
+      feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Nenhuma publicação por aqui ainda.</p>';
     }
-  }))
+  })
   .catch(() => {
     feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Não foi possível carregar as publicações.</p>';
   });
