@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
-use App\Http\Controllers\Admin\VideoController as AdminVideoController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +29,6 @@ Route::prefix('adm')->name('admin.')->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::resource('posts', AdminPostController::class)->except(['show']);
-        Route::resource('videos', AdminVideoController::class)->except(['show']);
         Route::get('settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
         Route::post('settings/resume', [AdminSettingController::class, 'updateResume'])->name('settings.resume');
         Route::resource('companies', AdminCompanyController::class)->except(['show', 'index']);

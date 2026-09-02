@@ -1,4 +1,4 @@
-/* ===== ilustrações originais (SVG, traço único + acento neon) ===== */
+/* ===== ilustrações originais (SVG, traço único + acento neon) — fallback quando o post não tem capa ===== */
 const illustrations = {
   brain: `<svg viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg">
     <g fill="none" stroke="#8CF7FF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -85,63 +85,10 @@ const illustrations = {
   </svg>`
 };
 
-/* ===== avatar do autor: logo do site, não foto pessoal ===== */
-const logoSvg = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <defs><linearGradient id="feedLogoGrad" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#9D4EFF"/>
-  </linearGradient></defs>
-  <rect width="100" height="100" fill="url(#feedLogoGrad)"/>
-  <path d="M16 32 L6 50 L16 68" stroke="#07070C" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
-  <path d="M84 32 L94 50 L84 68" stroke="#07070C" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
-  <text x="50" y="64" font-family="Chakra Petch, sans-serif" font-size="38" font-weight="700" fill="#07070C" text-anchor="middle">LH</text>
-</svg>`;
-const avatarUrl = "data:image/svg+xml," + encodeURIComponent(logoSvg);
+const GLOBE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>';
+const PLAY_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
 
-function initialsOf(name){
-  return name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
-}
-function hueOf(name){
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
-  return Math.abs(h);
-}
-function avatarBlock(name, url, sizeClass, extraClass){
-  const hue = hueOf(name);
-  const grad = `linear-gradient(135deg, hsl(${hue},85%,58%), hsl(${(hue + 70) % 360},85%,45%))`;
-  const img = url
-    ? `<img src="${url}" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
-    : "";
-  const fallbackDisplay = url ? "display:none;" : "display:flex;";
-  return `<span class="avatar-frame ${sizeClass}${extraClass ? " " + extraClass : ""}">${img}<span class="avatar-fallback" style="background:${grad}; color:#07070C; ${fallbackDisplay}">${initialsOf(name)}</span></span>`;
-}
-
-const REACTIONS = [
-  { key:"like",    emoji:"👍", label:"Gostei",       cls:"active" },
-  { key:"celebrate",emoji:"👏", label:"Apoio",        cls:"active reacted-amber" },
-  { key:"support", emoji:"💡", label:"Interessante", cls:"active reacted-amber" },
-  { key:"love",    emoji:"❤️", label:"Amei",         cls:"active reacted-love" },
-  { key:"insightful",emoji:"💡",label:"Perspicaz",   cls:"active reacted-amber" },
-  { key:"funny",   emoji:"😄", label:"Engraçado",     cls:"active reacted-amber" }
-];
-
-function icon(name){
-  const icons = {
-    like: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>',
-    globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>',
-    dots: '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>',
-    save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>',
-    hide: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
-    flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>'
-  };
-  return icons[name] || "";
-}
-
-function withHashtags(body, tags){
-  const inline = tags.map(t => `<span class="hashtag">${t}</span>`).join(" ");
-  return `${body} ${inline}`;
-}
-
-/* ===== posts cujo link original é um vídeo do YouTube: caem na coluna lateral ===== */
+/* ===== posts cujo link original é um vídeo do YouTube: viram cards de vídeo ===== */
 function extractYoutubeId(url){
   if (!url) return null;
   try {
@@ -157,205 +104,117 @@ function extractYoutubeId(url){
 function isYoutubePost(p){
   return !!extractYoutubeId(p.sourceUrl);
 }
-
-function renderVideoCard(v){
-  const el = document.createElement("a");
-  el.className = "video-card";
-  el.href = v.watchUrl;
-  el.target = "_blank";
-  el.rel = "noopener noreferrer";
-  el.innerHTML = `
-    <span class="video-thumb">
-      <img src="${v.thumbnailUrl}" alt="" loading="lazy">
-      <span class="video-play">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-      </span>
-    </span>
-    <span class="video-meta">
-      <span class="video-title">${v.title}</span>
-      <span class="video-time">${v.time}</span>
-    </span>
-  `;
-  return el;
-}
-window.renderVideoCard = renderVideoCard;
-
-function renderPostAsVideo(p){
+function postToVideo(p){
   const ytId = extractYoutubeId(p.sourceUrl);
-  return renderVideoCard({
+  return {
     title: p.lead,
     time: p.time,
     thumbnailUrl: `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`,
+    embedUrl: `https://www.youtube.com/embed/${ytId}`,
     watchUrl: p.sourceUrl
-  });
+  };
 }
 
-function renderPost(p, idx, featured){
+/* ===== grid principal de vídeos: clique na miniatura reproduz inline ===== */
+function renderVideoTile(v, delayIdx){
   const el = document.createElement("article");
-  el.className = featured ? "post featured" : "post";
+  el.className = "video-tile";
+  if (typeof delayIdx === "number") el.style.animationDelay = `${Math.min(delayIdx, 8) * 55}ms`;
   el.innerHTML = `
-    <div class="post-head">
-      ${avatarBlock("Leandro Hüber", avatarUrl, "af-42")}
-      <div class="post-who">
-        <div class="post-name-line">
-          <span class="post-name">Leandro Hüber</span>
-          <span class="post-degree">· 1º</span>
-        </div>
-        <div class="post-role">${p.role}</div>
-        <div class="post-time">${p.time} · ${icon("globe")}</div>
-      </div>
-      <button class="post-more" aria-label="Mais opções" data-more>${icon("dots")}</button>
-      <div class="more-menu" data-more-menu>
-        <button>${icon("save")} Salvar</button>
-        <button>${icon("hide")} Não tenho interesse</button>
-        <button>${icon("flag")} Denunciar publicação</button>
-      </div>
-    </div>
-    <div class="post-text">
-      <span class="lead">${p.lead}</span>
-      <div class="post-body" data-body>${withHashtags(p.body, p.tags)}</div>
-      <button class="see-more" data-see-more hidden>...ver mais</button>
-    </div>
-    <div class="illustration">
-      ${featured ? `<span class="featured-badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8-6.3 3.8 1.7-7-5.4-4.7 7.1-.6z"/></svg>Em destaque</span>` : ""}
-      ${p.coverImageUrl ? `<img src="${p.coverImageUrl}" alt="" loading="lazy">` : illustrations[p.illustration]}
-    </div>
-    ${p.sourceUrl ? `<div class="post-source"><a href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">Ver notícia original ↗</a></div>` : ""}
-    <div class="engagement">
-      <div class="engagement-left">
-        <div class="reaction-icons">
-          <span style="background:#00F0FF">👍</span><span style="background:#FF2E9A">❤️</span><span style="background:#9D4EFF">👏</span>
-        </div>
-        <span class="count-text"><b data-like-count>${p.likes}</b>${p.topReactor ? ` · ${p.topReactor} e outras pessoas` : ""}</span>
-      </div>
-    </div>
-    <div class="actions">
-      <div class="action-wrap">
-        <div class="reaction-picker" data-picker>
-          ${REACTIONS.map(r => `<button data-react="${r.key}" title="${r.label}">${r.emoji}</button>`).join("")}
-        </div>
-        <button data-like-btn>${icon("like")}<span data-like-label>Gostei</span></button>
-      </div>
+    <button type="button" class="video-tile-thumb" aria-label="Reproduzir vídeo: ${v.title}">
+      <img src="${v.thumbnailUrl}" alt="" loading="lazy">
+      <span class="video-tile-play"><span>${PLAY_SVG}</span></span>
+    </button>
+    <div class="video-tile-body">
+      <p class="video-tile-title">${v.title}</p>
+      <p class="video-tile-time">${GLOBE_SVG} ${v.time}</p>
     </div>
   `;
 
-  /* --- estado --- */
-  let liked = false, likeCount = p.likes, currentReaction = null;
-
-  const likeBtn = el.querySelector("[data-like-btn]");
-  const likeCountEl = el.querySelector("[data-like-count]");
-  const picker = el.querySelector("[data-picker]");
-  let pickerTimer;
-
-  function setReaction(r){
-    currentReaction = r;
-    liked = true;
-    likeCount = p.likes + 1;
-    likeCountEl.textContent = likeCount;
-    likeBtn.className = r.cls;
-    likeBtn.classList.add("pop");
-    setTimeout(() => likeBtn.classList.remove("pop"), 220);
-    likeBtn.innerHTML = `<span style="font-size:15px;line-height:1">${r.emoji}</span><span data-like-label>${r.label}</span>`;
-    hidePicker();
-  }
-  function clearReaction(){
-    currentReaction = null; liked = false;
-    likeCount = p.likes;
-    likeCountEl.textContent = likeCount;
-    likeBtn.className = "";
-    likeBtn.innerHTML = `${icon("like")}<span data-like-label>Gostei</span>`;
-  }
-  function showPicker(){ clearTimeout(pickerTimer); picker.classList.add("show"); }
-  function hidePicker(){ pickerTimer = setTimeout(() => picker.classList.remove("show"), 160); }
-
-  likeBtn.addEventListener("click", () => { liked && currentReaction ? clearReaction() : setReaction(REACTIONS[0]); });
-  likeBtn.addEventListener("mouseenter", showPicker);
-  likeBtn.addEventListener("mouseleave", hidePicker);
-  picker.addEventListener("mouseenter", showPicker);
-  picker.addEventListener("mouseleave", hidePicker);
-  picker.querySelectorAll("[data-react]").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const r = REACTIONS.find(x => x.key === btn.dataset.react);
-      setReaction(r);
-    });
-  });
-
-  /* --- menu "..." --- */
-  const moreBtn = el.querySelector("[data-more]");
-  const moreMenu = el.querySelector("[data-more-menu]");
-  moreBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    document.querySelectorAll(".more-menu.open").forEach(m => { if (m !== moreMenu) m.classList.remove("open"); });
-    moreMenu.classList.toggle("open");
-  });
-
-  /* --- ver mais --- */
-  const bodyEl = el.querySelector("[data-body]");
-  const seeMoreBtn = el.querySelector("[data-see-more]");
-  requestAnimationFrame(() => {
-    if (bodyEl.scrollHeight > bodyEl.clientHeight + 2) {
-      seeMoreBtn.hidden = false;
-      seeMoreBtn.addEventListener("click", () => {
-        bodyEl.classList.add("expanded");
-        seeMoreBtn.hidden = true;
-      });
-    }
-  });
+  const thumbBtn = el.querySelector(".video-tile-thumb");
+  thumbBtn.addEventListener("click", () => {
+    thumbBtn.classList.add("is-playing");
+    thumbBtn.innerHTML = `<iframe src="${v.embedUrl}?autoplay=1&rel=0" title="${v.title}" loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  }, { once: true });
 
   return el;
 }
+window.renderVideoTile = renderVideoTile;
 
-document.addEventListener("click", () => {
-  document.querySelectorAll(".more-menu.open").forEach(m => m.classList.remove("open"));
-});
+/* ===== lista compacta de publicações (coluna lateral) ===== */
+function renderMiniPost(p){
+  const hasLink = !!p.sourceUrl;
+  const el = document.createElement(hasLink ? "a" : "div");
+  el.className = "mini-card";
+  if (hasLink) {
+    el.href = p.sourceUrl;
+    el.target = "_blank";
+    el.rel = "noopener noreferrer";
+  }
+  el.innerHTML = `
+    <span class="mini-thumb">${p.coverImageUrl ? `<img src="${p.coverImageUrl}" alt="" loading="lazy">` : (illustrations[p.illustration] || "")}</span>
+    <span class="mini-meta">
+      <span class="mini-title">${p.lead}</span>
+      <span class="mini-time">${p.time}</span>
+    </span>
+  `;
+  return el;
+}
 
-function skeletonPost(withCover){
+function skeletonTile(){
   const el = document.createElement("div");
-  el.className = "skeleton-post";
-  el.innerHTML = `
-    <div class="skeleton-row">
-      <div class="skeleton-block skeleton-avatar"></div>
-      <div class="skeleton-lines">
-        <span style="width:40%"></span>
-        <span style="width:65%"></span>
-      </div>
-    </div>
-    <div class="skeleton-lines">
-      <span style="width:90%"></span>
-      <span style="width:75%"></span>
-    </div>
-    ${withCover ? '<div class="skeleton-block skeleton-cover"></div>' : ""}
-  `;
+  el.className = "skeleton-tile video-skeleton-posts";
+  el.innerHTML = `<div class="skeleton-block"></div><div class="skeleton-lines"><span style="width:85%"></span><span style="width:45%"></span></div>`;
+  return el;
+}
+function skeletonMiniRow(){
+  const el = document.createElement("div");
+  el.className = "skeleton-row";
+  el.style.padding = "9px 8px";
+  el.innerHTML = `<div class="skeleton-block" style="width:56px;height:56px;border-radius:9px;flex-shrink:0;"></div><div class="skeleton-lines"><span style="width:90%"></span><span style="width:50%"></span></div>`;
   return el;
 }
 
-const feed = document.getElementById("feed");
-const videoGrid = document.getElementById("videoGrid");
+/* ===== coordena o estado "vazio" entre feed.js (posts-vídeo) e videos.js (vídeos cadastrados) ===== */
+let pendingVideoSources = 2;
+function maybeShowVideoEmpty(){
+  pendingVideoSources--;
+  if (pendingVideoSources <= 0 && !videoGrid.querySelector(".video-tile")) {
+    videoGrid.innerHTML = '<p class="video-empty">Nenhum vídeo publicado ainda.</p>';
+  }
+}
+window.maybeShowVideoEmpty = maybeShowVideoEmpty;
 
-for (let i = 0; i < 4; i++) feed.appendChild(skeletonPost(true));
+const videoGrid = document.getElementById("videoGrid");
+const feedList = document.getElementById("feedList");
+
+for (let i = 0; i < 6; i++) videoGrid.appendChild(skeletonTile());
+for (let i = 0; i < 5; i++) feedList.appendChild(skeletonMiniRow());
 
 fetch("/api/posts")
   .then(res => res.json())
   .then(payload => {
-    feed.innerHTML = "";
-    let mainIdx = 0;
-    payload.data.forEach((p) => {
+    videoGrid.querySelectorAll(".video-skeleton-posts").forEach(el => el.remove());
+    feedList.innerHTML = "";
+    let videoIdx = 0, postCount = 0;
+    payload.data.forEach(p => {
       if (isYoutubePost(p)) {
-        if (videoGrid) videoGrid.appendChild(renderPostAsVideo(p));
+        videoGrid.appendChild(renderVideoTile(postToVideo(p), videoIdx++));
       } else {
-        const card = renderPost(p, mainIdx, mainIdx === 0);
-        card.style.animationDelay = `${Math.min(mainIdx, 6) * 60}ms`;
-        feed.appendChild(card);
-        mainIdx++;
+        feedList.appendChild(renderMiniPost(p));
+        postCount++;
       }
     });
-    if (!mainIdx) {
-      feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Nenhuma publicação por aqui ainda.</p>';
+    if (!postCount) {
+      feedList.innerHTML = '<p class="mini-empty">Nenhuma publicação por aqui ainda.</p>';
     }
+    maybeShowVideoEmpty();
   })
   .catch(() => {
-    feed.innerHTML = '<p style="color:var(--ink-faint); text-align:center; padding:24px;">Não foi possível carregar as publicações.</p>';
+    videoGrid.querySelectorAll(".video-skeleton-posts").forEach(el => el.remove());
+    feedList.innerHTML = '<p class="mini-empty">Não foi possível carregar as publicações.</p>';
+    maybeShowVideoEmpty();
   });
 
 /* --- follow button do perfil --- */
