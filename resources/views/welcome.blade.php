@@ -405,19 +405,92 @@
     text-align:center; font-size:12px; color:var(--ink-faint); font-family:'JetBrains Mono',monospace;
   }
 
-  /* ---------- vídeos (renderizados como posts, com player embutido) ---------- */
+  /* ---------- vídeos: cards compactos em miniatura ---------- */
   .videos-section{ scroll-margin-top:90px; }
   .illustration iframe{ width:100%; height:100%; display:block; border:0; }
   .video-empty{ color:var(--ink-faint); font-size:13px; text-align:center; padding:24px; }
 
+  .video-list{ display:flex; flex-direction:column; gap:10px; }
+  .video-card{
+    display:flex; gap:10px; text-decoration:none; color:inherit;
+    padding:8px; margin:-8px; border-radius:10px;
+    transition: background .15s ease;
+  }
+  .video-card:hover{ background:var(--card-2); }
+  .video-thumb{
+    position:relative; flex-shrink:0; width:104px; aspect-ratio:16/9;
+    border-radius:8px; overflow:hidden; background:var(--card-2);
+    border:1px solid var(--line-bright);
+  }
+  .video-thumb img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform .25s ease; }
+  .video-card:hover .video-thumb img{ transform:scale(1.08); }
+  .video-play{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
+  }
+  .video-play svg{ width:26px; height:26px; color:#fff; filter: drop-shadow(0 0 6px rgba(0,0,0,.6)); }
+  .video-meta{ min-width:0; padding-top:1px; }
+  .video-title{
+    font-size:12.5px; font-weight:600; line-height:1.35; color:var(--ink);
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
+  }
+  .video-card:hover .video-title{ color:var(--cyan); }
+  .video-time{ font-size:11px; color:var(--ink-faint); font-family:'JetBrains Mono',monospace; margin-top:4px; }
+
+  /* ---------- post em destaque (primeiro item do feed) ---------- */
+  .post.featured{ border-color:var(--line-bright); }
+  .post.featured .lead{ font-size:17px; }
+  .post.featured .illustration{ aspect-ratio:16/8; position:relative; }
+  .featured-badge{
+    position:absolute; top:12px; left:12px; z-index:2;
+    display:flex; align-items:center; gap:5px;
+    background:rgba(7,7,12,0.75); backdrop-filter:blur(4px);
+    border:1px solid var(--cyan-dim); color:var(--cyan);
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    padding:5px 10px; border-radius:999px;
+  }
+  .featured-badge svg{ width:11px; height:11px; }
+  .illustration{ position:relative; }
+  .illustration img{ transition: transform .3s ease; }
+  .post:hover .illustration img{ transform:scale(1.025); }
+
+  /* ---------- animação de entrada dos cards ---------- */
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  .post{ animation: cardIn .45s ease both; }
+  @media (prefers-reduced-motion: reduce){ .post{ animation:none; } }
+
+  /* ---------- skeleton (estado de carregamento) ---------- */
+  .skeleton-post{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; display:flex; flex-direction:column; gap:12px; overflow:hidden;
+  }
+  .skeleton-row{ display:flex; align-items:center; gap:10px; }
+  .skeleton-block{
+    border-radius:8px;
+    background: linear-gradient(100deg, var(--card-2) 30%, var(--line-bright) 50%, var(--card-2) 70%);
+    background-size:200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+  @keyframes shimmer{ 0%{ background-position:150% 0; } 100%{ background-position:-50% 0; } }
+  .skeleton-avatar{ width:42px; height:42px; border-radius:12px; flex-shrink:0; }
+  .skeleton-lines{ flex:1; display:flex; flex-direction:column; gap:7px; }
+  .skeleton-lines span{ height:9px; border-radius:5px; display:block;
+    background: linear-gradient(100deg, var(--card-2) 30%, var(--line-bright) 50%, var(--card-2) 70%);
+    background-size:200% 100%; animation: shimmer 1.4s ease-in-out infinite;
+  }
+  .skeleton-cover{ height:220px; }
+
   /* ---------- responsive breakpoints ---------- */
   @media (max-width:1120px){
     .page{ grid-template-columns: 248px minmax(0,1fr); }
-    .sidebar-right{ display:none; }
+    .sidebar-right{ grid-column: 1 / -1; order:3; position:static; }
+    .main-col{ order:2; }
   }
   @media (max-width:780px){
     .page{ grid-template-columns: 1fr; padding:16px 14px 60px; gap:16px; }
-    .sidebar-left{ position:static; }
+    .sidebar-left{ position:static; order:1; }
+    .main-col{ order:2; }
+    .sidebar-right{ order:3; }
     .topbar-inner{ padding:12px 16px; }
   }
   @media (max-width:480px){
@@ -584,7 +657,7 @@
       </a>
       <section class="videos-section" id="videos">
         <p class="feed-heading">vídeos</p>
-        <div class="feed" id="videoGrid"></div>
+        <div class="video-list" id="videoGrid"></div>
       </section>
     </aside>
 
